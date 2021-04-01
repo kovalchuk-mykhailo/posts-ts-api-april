@@ -133,6 +133,22 @@ functions:
               - X-Amz-Security-Token
               - X-Amz-User-Agent
             allowCredentials: false
+  updateComment:
+    handler: src/services/comments/comments.updateComment
+    events:
+      - http:
+          path: comments/{commentId}
+          method: patch
+          cors:
+            origin: "*" # <-- Specify allowed origin
+            headers: # <-- Specify allowed headers
+              - Content-Type
+              - X-Amz-Date
+              - Authorization
+              - X-Api-Key
+              - X-Amz-Security-Token
+              - X-Amz-User-Agent
+            allowCredentials: false
   getAllComments:
     handler: src/services/comments/comments.getAllComments
     events:
