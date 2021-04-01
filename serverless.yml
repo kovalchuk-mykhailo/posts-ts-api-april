@@ -22,6 +22,7 @@ provider:
   #
   environment:
     POSTS_TABLENAME: posts
+    COMMENT_TABLENAME: comments
 
   # 'iamRoleStatements' defines the permission policy for the Lambda function.
   # In this case Lambda functions are granted with permissions to access DynamoDB.
@@ -84,6 +85,86 @@ functions:
           path: post/{postId}
           method: get
           cors: true
+  getCommentByUser:
+    handler: src/services/comments/comments.getCommentByUser
+    events:
+      - http:
+          path: comments/user/{userId}
+          cors:
+            origin: "*" # <-- Specify allowed origin
+            headers: # <-- Specify allowed headers
+              - Content-Type
+              - X-Amz-Date
+              - Authorization
+              - X-Api-Key
+              - X-Amz-Security-Token
+              - X-Amz-User-Agent
+            allowCredentials: false
+          method: get
+  createComment:
+    handler: src/services/comments/comments.createComment
+    events:
+      - http:
+          path: comments
+          method: post
+          cors:
+            origin: "*" # <-- Specify allowed origin
+            headers: # <-- Specify allowed headers
+              - Content-Type
+              - X-Amz-Date
+              - Authorization
+              - X-Api-Key
+              - X-Amz-Security-Token
+              - X-Amz-User-Agent
+            allowCredentials: false
+  deleteComment:
+    handler: src/services/comments/comments.deleteComment
+    events:
+      - http:
+          path: comments/{commentId}
+          method: delete
+          cors:
+            origin: "*" # <-- Specify allowed origin
+            headers: # <-- Specify allowed headers
+              - Content-Type
+              - X-Amz-Date
+              - Authorization
+              - X-Api-Key
+              - X-Amz-Security-Token
+              - X-Amz-User-Agent
+            allowCredentials: false
+  getAllComments:
+    handler: src/services/comments/comments.getAllComments
+    events:
+      - http:
+          path: comments
+          method: get
+          cors:
+            origin: "*" # <-- Specify allowed origin
+            headers: # <-- Specify allowed headers
+              - Content-Type
+              - X-Amz-Date
+              - Authorization
+              - X-Api-Key
+              - X-Amz-Security-Token
+              - X-Amz-User-Agent
+            allowCredentials: false
+  getOneComment:
+    handler: src/services/comments/comments.getOneComment
+    events:
+      - http:
+          path: comment/{commentId}
+          method: get
+          cors:
+            origin: "*" # <-- Specify allowed origin
+            headers: # <-- Specify allowed headers
+              - Content-Type
+              - X-Amz-Date
+              - Authorization
+              - X-Api-Key
+              - X-Amz-Security-Token
+              - X-Amz-User-Agent
+            allowCredentials: false
 
 resources:
   Resources:
@@ -125,3 +206,24 @@ resources:
             Projection:
               ProjectionType: ALL
         BillingMode: PAY_PER_REQUEST
+    comments:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: comments
+        AttributeDefinitions:
+          - AttributeName: commentId
+            AttributeType: S
+          - AttributeName: userId
+            AttributeType: S
+        KeySchema:
+          - AttributeName: commentId
+            KeyType: HASH
+        GlobalSecondaryIndexes:
+          - IndexName: userId-index
+            KeySchema:
+              - AttributeName: userId
+                KeyType: HASH
+            Projection:
+              ProjectionType: ALL
+        BillingMode: PAY_PER_REQUEST
+
