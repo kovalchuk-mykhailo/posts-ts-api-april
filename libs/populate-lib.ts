@@ -4,7 +4,12 @@ config.update({ region: "us-east-1" });
 
 const dynamoDb = new DynamoDB.DocumentClient();
 
-export default function populate(TableName, data) {
+/**
+ * Fill a particular table with particular data.
+ * @param TableName - name of Table in DB
+ * @param data - array of Items
+ */
+export default function populate(TableName: string, data: any[]) {
   data.forEach((Item) => {
     const params = {
       TableName,

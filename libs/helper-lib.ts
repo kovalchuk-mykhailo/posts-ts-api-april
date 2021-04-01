@@ -1,5 +1,10 @@
 import { Post } from "src/interfaces/Post";
 
+/**
+ * Sort array of Posts by Date in the descending and ascending ways.
+ * @param arr - array of Posts.
+ * @param isDescending - boolean value for specify sorting way. Default way = ascending
+ */
 export const sortPostsByDate = (arr: Post[], isDescending: boolean) => {
   return arr.sort((a, b) => {
     if (isDescending) {

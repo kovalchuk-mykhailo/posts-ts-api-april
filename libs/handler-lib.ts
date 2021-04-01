@@ -12,6 +12,10 @@ export class ResponseError extends Error {
 
 type LambdaFunction = (event: APIGatewayEvent, context: Context) => any;
 
+/**
+ * Handle a request of a passed lambda function
+ * @param lambda - lambda function that will be requested
+ */
 export default function handler(lambda: LambdaFunction) {
   return async function (
     event: APIGatewayEvent,
