@@ -49,7 +49,7 @@ export const getPostsByUser = handler(async function (
 });
 
 //Should work well!
-export const getPost = handler(async function (
+export const getOnePost = handler(async function (
   event: APIGatewayEvent,
   context: Context
 ): Promise<Post> {

@@ -77,6 +77,13 @@ functions:
           path: posts
           method: get
           cors: true
+  getOnePost:
+    handler: src/services/posts/posts.getOnePost
+    events:
+      - http:
+          path: post/{postId}
+          method: get
+          cors: true
 
 resources:
   Resources:
