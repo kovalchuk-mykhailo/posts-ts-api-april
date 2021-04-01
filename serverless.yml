@@ -62,14 +62,24 @@ functions:
           path: posts
           method: post
           cors: true
-          authorizer: aws_iam
+          # authorizer: aws_iam
   deletePost:
     handler: src/services/posts/posts.deletePost
     events:
       - http:
           path: posts/{postId}
           method: delete
-          cors: true
+          cors:
+            origin: "*" # <-- Specify allowed origin
+            headers: # <-- Specify allowed headers
+              - Content-Type
+              - X-Amz-Date
+              - Authorization
+              - X-Api-Key
+              - X-Amz-Security-Token
+              - X-Amz-User-Agent
+            allowCredentials: false
+          # authorizer: aws_iam
   getAllPosts:
     handler: src/services/posts/posts.getAllPosts
     events:

@@ -1,4 +1,3 @@
-export interface ResponseStatus<Item> {
+export interface ResponseStatus {
   status: boolean;
-  item: Item;
 }

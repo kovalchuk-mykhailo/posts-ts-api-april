@@ -1,3 +1,5 @@
+import { APIGatewayEvent } from "aws-lambda";
+
 import { Post } from "src/interfaces/Post";
 
 /**
@@ -13,4 +15,8 @@ export const sortPostsByDate = (arr: Post[], isDescending: boolean) => {
 
     return a.createdAt < b.createdAt ? -1 : a.createdAt > b.createdAt ? 1 : 0;
   });
+};
+
+export const getDataFromEvent = (event: APIGatewayEvent) => {
+  return JSON.parse(event.body) || {};
 };

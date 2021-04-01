@@ -8,7 +8,7 @@ import handler, {
   throwNotFoundError,
 } from "../../../libs/handler-lib";
 import dynamoDb from "../../../libs/dynamodb-lib";
-import { sortPostsByDate } from "../../../libs/helper-lib";
+import { getDataFromEvent, sortPostsByDate } from "../../../libs/helper-lib";
 import { Post } from "src/interfaces/Post";
 import { ResponseStatus } from "src/interfaces/ResponseStatus";
 
@@ -83,20 +83,18 @@ export const createPost = handler(async function (
   event: APIGatewayEvent,
   context: Context
 ): Promise<Post> {
+  // to do: to get rid of defaultId
   // to demonstrate a work flow without UserId ( we set the default Id)
-  const userId =
-    event.requestContext.identity.cognitoIdentityId || DEFAULT_USER_ID;
+  // const userId =
+  //   event.requestContext.identity.cognitoIdentityId || DEFAULT_USER_ID;
+
+  const data = getDataFromEvent(event);
+
+  const { text = "", title = "", userId } = data;
 
   if (!userId) {
-    throw new ResponseError(
-      ERROR_TEXTS.POST.unknownUser.concat(JSON.stringify(event.requestContext)),
-      STATUS.unknownUser
-    );
+    throw new ResponseError(ERROR_TEXTS.POST.unknownUser, STATUS.unknownUser);
   }
-
-  const data = JSON.parse(event.body);
-
-  const { text, title } = data;
 
   const newPost: Post = {
     createdAt: new Date().toISOString(),
@@ -125,8 +123,15 @@ export const createPost = handler(async function (
 export const deletePost = handler(async function (
   event: APIGatewayEvent,
   context: Context
-): Promise<ResponseStatus<Post>> {
+): Promise<ResponseStatus> {
   const postId = event.pathParameters.postId;
+
+  const data = getDataFromEvent(event);
+  const { userId } = data;
+
+  if (!userId) {
+    throw new ResponseError(ERROR_TEXTS.POST.unknownUser, STATUS.unknownUser);
+  }
 
   const params = {
     TableName: process.env.POSTS_TABLENAME,
@@ -134,6 +139,10 @@ export const deletePost = handler(async function (
       postId,
     },
     ReturnValues: "ALL_OLD",
+    ConditionExpression: "userId = :id",
+    ExpressionAttributeValues: {
+      ":id": userId,
+    },
   };
 
   const handleDeleteItemError = (err, data) => {
@@ -146,13 +155,14 @@ export const deletePost = handler(async function (
   };
 
   const result = await dynamoDb.delete(params, handleDeleteItemError);
+
   const deletedPost: Post = result.Attributes as Post;
 
   if (!deletedPost) {
     throw new ResponseError(ERROR_TEXTS.POST.notFound, 404);
   }
 
-  return { status: true, item: deletedPost };
+  return { status: true };
 });
 
 //Should work well!
