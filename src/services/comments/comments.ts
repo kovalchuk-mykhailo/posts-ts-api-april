@@ -8,9 +8,11 @@ import handler, {
     throwNotFoundError,
 } from "../../../libs/handler-lib";
 import dynamoDb from "../../../libs/dynamodb-lib";
-import { sortCommentsByDate } from "../../../libs/helper-lib";
+import { sortCommentsByDate, paginateItems, getBooleanFromString } from "../../../libs/helper-lib";
 import { Comment } from "src/interfaces/Comment";
 import { ResponseStatus } from "src/interfaces/ResponseStatus";
+import { SORTING } from "src/constants/posts";
+
 
 const ERROR_TEXTS = {
     COMMENTS: {
@@ -125,7 +127,7 @@ export const createComment = handler(async function (
 export const deleteComment = handler(async function (
     event: APIGatewayEvent,
     context: Context
-): Promise<ResponseStatus<Comment>> {
+): Promise<ResponseStatus> {
     const commentId = event.pathParameters.commentId;
 
     const params = {
@@ -152,14 +154,19 @@ export const deleteComment = handler(async function (
         throw new ResponseError(ERROR_TEXTS.COMMENT.notFound, 404);
     }
 
-    return { status: true, item: deletedComment };
+    return { status: true };
 });
 
 export const getAllComments = handler(async function (
     event: APIGatewayEvent,
     context: Context
 ): Promise<Comment[]> {
-    const { descending = false, sort } = event.queryStringParameters || {};
+    const {
+        sort = SORTING.DEFAULT.sort,
+        descending = SORTING.DEFAULT.descending,
+        limit,
+        page,
+      } = event.queryStringParameters || {};
 
     const params = {
         TableName: process.env.COMMENT_TABLENAME,
@@ -174,10 +181,10 @@ export const getAllComments = handler(async function (
     let sortedComments = [...comments];
 
     if (sort === "date") {
-        sortedComments = sortCommentsByDate(comments, !!descending);
+        sortedComments = sortCommentsByDate(comments,  getBooleanFromString(descending));
     }
-
-    return sortedComments as Comment[];
+    const paginatedPosts = paginateItems(sortedComments, +limit, +page);
+    return paginatedPosts;
 });
 
 export const updateComment = handler(async function (
