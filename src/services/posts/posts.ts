@@ -153,3 +153,21 @@ export const deletePost = handler(async function (
 
   return { status: true, item: deletedPost };
 });
+
+//Should work well!
+export const getAllPosts = handler(async function (
+  event: APIGatewayEvent,
+  context: Context
+): Promise<Post[]> {
+  const params = {
+    TableName: process.env.POSTS_TABLENAME,
+  };
+
+  const result = (await dynamoDb.scanAll(params)) || [];
+
+  if (isArrayEmpty(result)) {
+    throwNotFoundError(ERROR_TEXTS.POSTS.notFound);
+  }
+
+  return result as Post[];
+});
