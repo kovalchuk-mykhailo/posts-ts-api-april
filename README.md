@@ -18,7 +18,6 @@ This starter uses the [serverless-bundle](https://github.com/AnomalyInnovations/
 - **No need to manage Webpack or Babel configs**
 
 ---
-
 ### Demo
 
 A demo version of this service is hosted on AWS - [`https://ylsml6v6r6.execute-api.us-east-1.amazonaws.com/dev/hello`](https://ylsml6v6r6.execute-api.us-east-1.amazonaws.com/dev/hello)

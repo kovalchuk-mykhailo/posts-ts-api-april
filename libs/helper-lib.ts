@@ -1,6 +1,7 @@
 import { APIGatewayEvent } from "aws-lambda";
 
 import { Post } from "src/interfaces/Post";
+import { Comment } from "src/interfaces/Comment";
 
 /**
  * Sort array of Posts by Date in the descending and ascending ways.
@@ -56,4 +57,14 @@ export const paginateItems = (items: any[], limit: number, page: number) => {
   }
 
   return items;
+};
+
+export const sortCommentsByDate = (arr: Comment[], isDescending: boolean) => {
+  return arr.sort((a, b) => {
+    if (isDescending) {
+      return a.createdAt > b.createdAt ? -1 : a.createdAt < b.createdAt ? 1 : 0;
+    }
+
+    return a.createdAt < b.createdAt ? -1 : a.createdAt > b.createdAt ? 1 : 0;
+  });
 };
