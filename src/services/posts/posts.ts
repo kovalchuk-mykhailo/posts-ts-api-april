@@ -8,6 +8,7 @@ import handler, {
   throwNotFoundError,
 } from "../../../libs/handler-lib";
 import dynamoDb from "../../../libs/dynamodb-lib";
+import { sortPostsByDate } from "../../../libs/helper-lib";
 import { Post } from "src/interfaces/Post";
 import { ResponseStatus } from "src/interfaces/ResponseStatus";
 
@@ -159,15 +160,23 @@ export const getAllPosts = handler(async function (
   event: APIGatewayEvent,
   context: Context
 ): Promise<Post[]> {
+  const { descending = false, sort } = event.queryStringParameters || {};
+
   const params = {
     TableName: process.env.POSTS_TABLENAME,
   };
 
-  const result = (await dynamoDb.scanAll(params)) || [];
+  const posts = (await dynamoDb.scanAll(params)) || [];
 
-  if (isArrayEmpty(result)) {
+  if (isArrayEmpty(posts)) {
     throwNotFoundError(ERROR_TEXTS.POSTS.notFound);
   }
 
-  return result as Post[];
+  let sortedPosts = [...posts];
+
+  if (sort === "date") {
+    sortedPosts = sortPostsByDate(posts, !!descending);
+  }
+
+  return sortedPosts as Post[];
 });
