@@ -63,6 +63,13 @@ functions:
           method: post
           cors: true
           authorizer: aws_iam
+  deletePost:
+    handler: src/services/posts/posts.deletePost
+    events:
+      - http:
+          path: posts/{postId}
+          method: delete
+          cors: true
 
 resources:
   Resources:

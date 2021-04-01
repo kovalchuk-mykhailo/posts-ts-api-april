@@ -9,6 +9,7 @@ import handler, {
 } from "../../../libs/handler-lib";
 import dynamoDb from "../../../libs/dynamodb-lib";
 import { Post } from "src/interfaces/Post";
+import { ResponseStatus } from "src/interfaces/ResponseStatus";
 
 const ERROR_TEXTS = {
   POSTS: {
@@ -118,4 +119,37 @@ export const createPost = handler(async function (
   }
 
   return params.Item;
+});
+
+export const deletePost = handler(async function (
+  event: APIGatewayEvent,
+  context: Context
+): Promise<ResponseStatus<Post>> {
+  const postId = event.pathParameters.postId;
+
+  const params = {
+    TableName: process.env.POSTS_TABLENAME,
+    Key: {
+      postId,
+    },
+    ReturnValues: "ALL_OLD",
+  };
+
+  const handleDeleteItemError = (err, data) => {
+    if (err) {
+      throw new ResponseError(
+        `Unable to delete item. Error JSON: ${JSON.stringify(err, null, 2)}`,
+        405
+      );
+    }
+  };
+
+  const result = await dynamoDb.delete(params, handleDeleteItemError);
+  const deletedPost: Post = result.Attributes as Post;
+
+  if (!deletedPost) {
+    throw new ResponseError(ERROR_TEXTS.POST.notFound, 404);
+  }
+
+  return { status: true, item: deletedPost };
 });
