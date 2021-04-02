@@ -73,7 +73,7 @@ export const createPost = handler(async function (
 ): Promise<Post> {
   const data = getDataFromEvent(event);
 
-  const { text = "", title = "", userId } = data;
+  const { text = "", title = "", author = "Incognito", userId } = data;
 
   if (!userId) {
     throw new ResponseError(ERROR_TEXTS.POST.unknownUser, STATUS.unknownUser);
@@ -85,6 +85,7 @@ export const createPost = handler(async function (
     text,
     title,
     userId,
+    author,
   };
   const params = {
     TableName: process.env.POSTS_TABLENAME,
