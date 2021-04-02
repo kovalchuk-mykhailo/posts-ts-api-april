@@ -87,7 +87,7 @@ export const createComment = handler(async function (
 ): Promise<Comment> {
     const data = JSON.parse(event.body) || {};
 
-    const { text, userId, postId } = data;
+    const { text, userId, postId, userName } = data;
 
     const newPost: Comment = {
         createdAt: new Date().toISOString(),
@@ -150,7 +150,7 @@ export const deleteComment = handler(async function (
 export const getAllComments = handler(async function (
     event: APIGatewayEvent,
     context: Context
-): Promise<{ comments: Comment[], commentsNum: number }> {
+): Promise<{ comments: Comment[]; commentsNum: number }> {
     const {
         sort = SORTING.DEFAULT.sort,
         descending = SORTING.DEFAULT.descending,
