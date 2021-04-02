@@ -51,7 +51,6 @@ export const getCommentByUser = handler(async function (
     return result as Comment[];
 });
 
-//Should work well!
 export const getOneComment = handler(async function (
     event: APIGatewayEvent,
     context: Context
@@ -79,23 +78,10 @@ const STATUS = {
     problemsPutItem: 400,
 };
 
-// const DEFAULT_COMMENT_ID = "userId-03";
-
 export const createComment = handler(async function (
     event: APIGatewayEvent,
     context: Context
 ): Promise<Comment> {
-    // to demonstrate a work flow without UserId ( we set the default Id)
-    //   const userId =
-    //     event.requestContext.identity.cognitoIdentityId || DEFAULT_COMMENT_ID;
-
-    //   if (!userId) {
-    //     throw new ResponseError(
-    //       ERROR_TEXTS.COMMENT.unknownUser.concat(JSON.stringify(event.requestContext)),
-    //       STATUS.unknownUser
-    //     );
-    //   }
-
     const data = JSON.parse(event.body) || {};
 
     const { text, userId, postId } = data;
@@ -160,7 +146,7 @@ export const deleteComment = handler(async function (
 export const getAllComments = handler(async function (
     event: APIGatewayEvent,
     context: Context
-): Promise<Comment[]> {
+): Promise<{ comments: Comment[], commentsNum: number }> {
     const {
         sort = SORTING.DEFAULT.sort,
         descending = SORTING.DEFAULT.descending,
@@ -171,6 +157,8 @@ export const getAllComments = handler(async function (
     const params = {
         TableName: process.env.COMMENT_TABLENAME,
     };
+
+
 
     const comments = (await dynamoDb.scanAll(params)) || [];
 
@@ -183,8 +171,12 @@ export const getAllComments = handler(async function (
     if (sort === "date") {
         sortedComments = sortCommentsByDate(comments,  getBooleanFromString(descending));
     }
-    const paginatedPosts = paginateItems(sortedComments, +limit, +page);
-    return paginatedPosts;
+    const paginatedComments = paginateItems(sortedComments, +limit, +page);
+
+    return {
+        comments: paginatedComments,
+        commentsNum: comments.length
+    };
 });
 
 export const updateComment = handler(async function (
