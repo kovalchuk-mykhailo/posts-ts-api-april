@@ -85,7 +85,6 @@ export const createComment = handler(async function (
   event: APIGatewayEvent,
   context: Context
 ): Promise<Comment> {
-<<<<<<< HEAD
     const data = JSON.parse(event.body) || {};
 
     const { text, userId, postId } = data;
@@ -112,45 +111,6 @@ export const createComment = handler(async function (
     }
 
     return params.Item;
-=======
-  // to demonstrate a work flow without UserId ( we set the default Id)
-  //   const userId =
-  //     event.requestContext.identity.cognitoIdentityId || DEFAULT_COMMENT_ID;
-
-  //   if (!userId) {
-  //     throw new ResponseError(
-  //       ERROR_TEXTS.COMMENT.unknownUser.concat(JSON.stringify(event.requestContext)),
-  //       STATUS.unknownUser
-  //     );
-  //   }
-
-  const data = JSON.parse(event.body) || {};
-
-  const { text, userId, postId } = data;
-
-  const newPost: Comment = {
-    createdAt: new Date().toISOString(),
-    postId,
-    text,
-    commentId: uuid.v1(),
-    userId,
-  };
-  const params = {
-    TableName: process.env.COMMENT_TABLENAME,
-    Item: newPost,
-  };
-
-  try {
-    await dynamoDb.put(params);
-  } catch (error) {
-    throw new ResponseError(
-      `Put Item to db issue: ${error.message}`,
-      STATUS.problemsPutItem
-    );
-  }
-
-  return params.Item;
->>>>>>> 9f5e8cb4b20e86cabcc6f3c763d2b8771ce739f3
 });
 
 export const deleteComment = handler(async function (
