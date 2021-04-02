@@ -14,7 +14,7 @@ import {
   paginateItems,
   sortPostsByDate,
 } from "../../../libs/helper-lib";
-import { Post } from "src/interfaces/Post";
+import { PaginatedPosts, Post } from "src/interfaces/Post";
 import { ResponseStatus } from "src/interfaces/ResponseStatus";
 import { ERROR_TEXTS, SORTING, STATUS } from "src/constants/posts";
 
@@ -152,7 +152,7 @@ export const deletePost = handler(async function (
 export const getAllPosts = handler(async function (
   event: APIGatewayEvent,
   context: Context
-): Promise<Post[]> {
+): Promise<PaginatedPosts> {
   const {
     sort = SORTING.DEFAULT.sort,
     descending = SORTING.DEFAULT.descending,
@@ -188,5 +188,10 @@ export const getAllPosts = handler(async function (
 
   const paginatedPosts = paginateItems(sortedPosts, +limit, +page);
 
-  return paginatedPosts as Post[];
+  const response: PaginatedPosts = {
+    posts: paginatedPosts,
+    postsNum: posts.length,
+  };
+
+  return response;
 });

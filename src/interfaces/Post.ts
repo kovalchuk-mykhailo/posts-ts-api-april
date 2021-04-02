@@ -6,3 +6,8 @@ export interface Post {
   userId: string;
   author: string;
 }
+
+export interface PaginatedPosts {
+  posts: Post[];
+  postsNum: number;
+}
