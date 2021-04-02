@@ -157,16 +157,26 @@ export const getAllPosts = handler(async function (
     descending = SORTING.DEFAULT.descending,
     limit,
     page,
+    title = "",
   } = event.queryStringParameters || {};
 
   const params = {
     TableName: process.env.POSTS_TABLENAME,
+    FilterExpression: "contains (#title, :title)",
+    ExpressionAttributeNames: {
+      "#title": "title",
+    },
+    ExpressionAttributeValues: {
+      ":title": title,
+    },
   };
 
-  const posts = (await dynamoDb.scanAll(params)) || [];
+  let posts;
 
-  if (isArrayEmpty(posts)) {
-    throwNotFoundError(ERROR_TEXTS.POSTS.notFound);
+  try {
+    posts = (await dynamoDb.scanAll(params)) || [];
+  } catch (error) {
+    throw new ResponseError(error.message, 400);
   }
 
   let sortedPosts = [...posts];
