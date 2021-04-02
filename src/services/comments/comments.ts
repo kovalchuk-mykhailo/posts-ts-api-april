@@ -95,6 +95,7 @@ export const createComment = handler(async function (
         text,
         commentId: uuid.v1(),
         userId,
+        userName
     };
     const params = {
         TableName: process.env.COMMENT_TABLENAME,

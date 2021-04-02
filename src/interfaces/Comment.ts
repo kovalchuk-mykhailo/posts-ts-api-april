@@ -4,4 +4,5 @@ export interface Comment {
     text: string;
     commentId: string;
     userId: string;
+    userName: string;
   }
