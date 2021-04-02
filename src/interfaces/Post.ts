@@ -4,4 +4,5 @@ export interface Post {
   text: string;
   title: string;
   userId: string;
+  author: string;
 }
