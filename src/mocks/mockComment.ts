@@ -7,6 +7,7 @@ const comments: Comment[] = [
   {
     postId: "postId-01",
     userId: "userId-01",
+    userName: "Luke",
     commentId: 'comment-01',
     text: "It's really incredible!!!",
     createdAt: "2021-03-30T08:27:03.141Z",
@@ -14,6 +15,7 @@ const comments: Comment[] = [
   {
     postId: "postId-02",
     userId: "userId-01",
+    userName: "Luke",
     commentId: 'comment-02',
     text: "It's amazing! Top for its money!",
     createdAt: "2021-03-30T08:28:14.764Z",
@@ -21,6 +23,7 @@ const comments: Comment[] = [
   {
     postId: "postId-03",
     userId: "userId-02",
+    userName: "Kate",
     commentId: 'comment-03',
     text: "Good, but I thought it would be better.",
     createdAt: "2021-03-25T10:44:29.610Z",
@@ -28,6 +31,7 @@ const comments: Comment[] = [
   {
     postId: "postId-04",
     userId: "userId-01",
+    userName: "Luke",
     commentId: 'comment-04',
     text: "Enough good.",
     createdAt: "2021-03-31T09:26:38.475Z",
